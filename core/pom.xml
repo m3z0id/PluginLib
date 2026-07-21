@@ -32,13 +32,6 @@
             <version>13.2.0</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Legacy Wrapper Module -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>legacy-wrapper</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>

@@ -1,7 +1,6 @@
 package me.darrionat.pluginlib.enchantments;
 
 import me.darrionat.pluginlib.Plugin;
-import me.darrionat.pluginlib.utils.LegacyService;
 import org.bukkit.enchantments.Enchantment;
 
 import java.util.HashMap;
@@ -54,12 +53,7 @@ public abstract class CustomEnchantment {
      * @return The {@link Enchantment} associated with this {@link CustomEnchantment}.
      */
     private Enchantment initEnchantment() {
-        Enchantment toReturn;
-        // 1.13+
-        if (!plugin.legacy())
-            toReturn = new EnchantmentWrapper(getName(), getMaxLevel());
-        else // Pre 1.13
-            toReturn = LegacyService.createEnchantment(getName(), getMaxLevel());
+        Enchantment toReturn = new EnchantmentWrapper(getName(), getMaxLevel());
         byName.put(getName().toLowerCase(), this);
         return toReturn;
     }

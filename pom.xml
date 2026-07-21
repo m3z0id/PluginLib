@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
     <modules>
-        <module>legacy-wrapper</module>
         <module>core</module>
     </modules>
     <build>
@@ -48,7 +47,7 @@
     <properties>
         <!-- Revision is the project version -->
         <revision>1.9.4</revision>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 </project>

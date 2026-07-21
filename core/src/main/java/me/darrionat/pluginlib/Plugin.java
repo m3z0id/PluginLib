@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import me.darrionat.pluginlib.bstats.Metrics;
 import me.darrionat.pluginlib.enchantments.EnchantmentHandler;
 import me.darrionat.pluginlib.enchantments.EnchantmentService;
-import me.darrionat.pluginlib.enchantments.LegacyEnchantmentService;
 import me.darrionat.pluginlib.guis.GuiHandler;
 import me.darrionat.pluginlib.guis.GuiManager;
 import me.darrionat.pluginlib.utils.SpigotMCUpdateHandler;
@@ -38,10 +37,7 @@ public abstract class Plugin extends JavaPlugin implements IPlugin {
     public final void onEnable() {
         instance = this;
         guiHandler = new GuiManager(this);
-        if (legacy())
-            enchantmentHandler = new LegacyEnchantmentService();
-        else
-            enchantmentHandler = new EnchantmentService();
+        enchantmentHandler = new EnchantmentService();
         initPlugin();
     }
 
