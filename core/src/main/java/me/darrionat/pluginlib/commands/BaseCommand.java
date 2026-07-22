@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,18 +19,15 @@ import java.util.Set;
 public abstract class BaseCommand implements CommandExecutor, HeritableCommand {
     private final ErrorHandler errorHandler;
     private final String permission;
-    //    private final List<SubCommand> subCommands = new ArrayList<>();
     private final Map<String, SubCommand> subCommandMap = new HashMap<>();
 
     /**
      * Creates and registers a new {@link BaseCommand} object.
-     *
-     * @param plugin The {@link Plugin} that the command will be registered to.
      */
-    public BaseCommand(Plugin plugin) {
-        this.errorHandler = plugin.getErrorHandler();
+    public BaseCommand() {
+        this.errorHandler = Plugin.getProject().getErrorHandler();
         this.permission = "%s.use".formatted(getCommandLabel());
-        PluginCommand command = plugin.getCommand(getCommandLabel());
+        PluginCommand command = Plugin.getProject().getCommand(getCommandLabel());
         command.setExecutor(this);
         command.setTabCompleter(new CommandTabCompleter(this));
     }
@@ -37,7 +35,7 @@ public abstract class BaseCommand implements CommandExecutor, HeritableCommand {
     /**
      * {@inheritDoc}
      */
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
         // Permission
         if (sender instanceof Player p) {
             if (!playerHasPermission(p)) {
@@ -62,7 +60,7 @@ public abstract class BaseCommand implements CommandExecutor, HeritableCommand {
     }
 
     /**
-     * Checks whether or not the player has permission for this command.
+     * Checks if the player has permission for this command.
      *
      * @param p The player.
      * @return Returns {@code true} if the player has permission to use this command, {@code false} otherwise.

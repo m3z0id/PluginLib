@@ -1,11 +1,9 @@
 package me.darrionat.pluginlib;
 
-import com.cryptomorin.xseries.XMaterial;
 import me.darrionat.pluginlib.bstats.Metrics;
 import me.darrionat.pluginlib.guis.GuiHandler;
 import me.darrionat.pluginlib.guis.GuiManager;
 import me.darrionat.pluginlib.utils.SpigotMCUpdateHandler;
-import me.darrionat.pluginlib.utils.Utils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -75,18 +73,9 @@ public abstract class Plugin extends JavaPlugin implements IPlugin {
     }
 
     /**
-     * Determines if the server version is {@code pre-1.13}.
-     *
-     * @return {@code true} if the server version is before {@code 1.13}; {@code false} for {@code 1.13} and beyond.
-     */
-    public boolean legacy() {
-        return !XMaterial.TRIDENT.isSupported();
-    }
-
-    /**
      * {@inheritDoc}
      */
     public void log(String s) {
-        this.getLogger().info(Utils.toColor(s));
+        this.getLogger().info(s);
     }
 }

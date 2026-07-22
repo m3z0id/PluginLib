@@ -1,8 +1,5 @@
 package me.darrionat.pluginlib.commands;
 
-import org.bukkit.entity.Player;
-
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -10,7 +7,7 @@ import java.util.Set;
  */
 public interface HeritableCommand {
     /**
-     * Gets the {@link List} of {@link SubCommand}s that this command has.
+     * Gets the {@link Set} of {@link SubCommand}s that this command has.
      *
      * @return Returns a list of all subcommands this command has.
      */

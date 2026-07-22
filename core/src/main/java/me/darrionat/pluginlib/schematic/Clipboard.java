@@ -1,8 +1,8 @@
 package me.darrionat.pluginlib.schematic;
 
-import com.cryptomorin.xseries.XMaterial;
 import me.darrionat.pluginlib.schematic.files.BuildSerializer;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -228,7 +228,7 @@ public class Clipboard {
                     // The current BlockData
                     BlockData data = blocks[Math.abs(x)][y][Math.abs(z)];
                     // Consider fill behavior
-                    if (!fill && data.getMaterial().equals(XMaterial.AIR.parseMaterial()))
+                    if (!fill && data.getMaterial().equals(Material.AIR))
                         continue;
                     // The current paste location
                     Location pasteLoc = new Location(world, blockX + x, blockY + y, blockZ + z);

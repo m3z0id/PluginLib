@@ -1,9 +1,9 @@
 package me.darrionat.pluginlib.schematic.files;
 
-import com.cryptomorin.xseries.XMaterial;
 import me.darrionat.pluginlib.schematic.Clipboard;
 import me.darrionat.pluginlib.schematic.MaterialService;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +57,7 @@ public class BuildSerializer {
 
                     BlockData data = blocks[x][y][z];
                     // Fetch the hash of this material
-                    int hash = MaterialService.hash(data.getMaterial());
+                    int hash = data.getMaterial().hashCode();
                     // Get the block data and hide all unspecified tags to optimize storage
                     String dataString = data.getAsString(true);
                     // Save the data and hash as a string as hash{data}
@@ -148,11 +148,11 @@ public class BuildSerializer {
                 int hash = Integer.parseInt(splitData[0]);
                 String data = splitData[1];
                 // Find the type
-                XMaterial type = MaterialService.findMaterial(hash);
+                Material type = MaterialService.findMaterial(hash);
                 if (type == null)
                     throw new NullPointerException("Invalid Material");
                 // Get the block data
-                BlockData blockData = Bukkit.createBlockData(type.parseMaterial(), data);
+                BlockData blockData = Bukkit.createBlockData(type, data);
                 toReturn[y][z] = blockData;
             }
         }

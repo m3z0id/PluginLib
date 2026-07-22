@@ -31,11 +31,10 @@ public abstract class SubCommand {
      * Creates a new {@link SubCommand} object and adds it the {@link BaseCommand}'s subcommands.
      *
      * @param parentCommand The parent command.
-     * @param plugin        The plugin that the subcommand belongs to.
      */
-    public SubCommand(BaseCommand parentCommand, Plugin plugin) {
+    public SubCommand(BaseCommand parentCommand) {
         this.parentCommand = parentCommand;
-        this.errorHandler = plugin.getErrorHandler();
+        this.errorHandler = Plugin.getProject().getErrorHandler();
         this.permission = "%s.%s".formatted(parentCommand.getCommandLabel(), getSubCommand());
         parentCommand.addSubCommand(this);
     }

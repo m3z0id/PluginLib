@@ -1,15 +1,17 @@
 package me.darrionat.pluginlib.guis;
 
-import com.cryptomorin.xseries.XMaterial;
 import me.darrionat.pluginlib.Plugin;
 import me.darrionat.pluginlib.utils.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,7 +30,7 @@ public abstract class Gui {
     /**
      * The title of the inventory.
      */
-    protected final String name;
+    protected final Component name;
     /**
      * The size of the inventory.
      */
@@ -46,16 +48,19 @@ public abstract class Gui {
     /**
      * Creates a new {@link Gui}.
      *
-     * @param plugin The plugin that this gui belongs to.
      * @param name   The title of the gui.
      * @param rows   The amount of rows the {@link Inventory} will have.
      */
-    public Gui(Plugin plugin, String name, int rows) {
-        this.plugin = plugin;
+    public Gui(Component name, int rows) throws IllegalArgumentException {
+        this.plugin = Plugin.getProject();
         this.size = rows * 9;
-        if (name.length() > 32)
-            name = name.substring(0, 31);
+
+        String nameStr = Utils.getComponentPlaintext(name);
+
+        if (nameStr.length() > 32)
+            throw new IllegalArgumentException("%s is longer than 32 characters".formatted(nameStr));
         this.name = name;
+
         inv = Bukkit.createInventory(null, size, name);
         plugin.getGuiHandler().registerGui(this);
     }
@@ -66,7 +71,7 @@ public abstract class Gui {
      * @return The name of the {@link Gui}.
      */
     public String getName() {
-        return name;
+        return Utils.getComponentPlaintext(name);
     }
 
     /**
@@ -119,11 +124,8 @@ public abstract class Gui {
      * @param name       The display name of the item.
      * @param loreString The lines of the lore of the item.
      */
-    public void createItem(XMaterial material, int amount, int invSlot, String name, String... loreString) {
-        List<String> lore = new ArrayList<>();
-        for (String s : loreString) {
-            lore.add(Utils.toColor(s));
-        }
+    public void createItem(Material material, int amount, int invSlot, Component name, Component... loreString) {
+        List<Component> lore = new ArrayList<>(Arrays.asList(loreString));
         createItem(material, amount, invSlot, name, lore);
     }
 
@@ -137,7 +139,7 @@ public abstract class Gui {
      * @param lore     The lore of the item.
      * @return Returns the item placed within the {@link Gui}.
      */
-    public ItemStack createItem(XMaterial material, int amount, int invSlot, String name, List<String> lore) {
+    public ItemStack createItem(Material material, int amount, int invSlot, Component name, List<Component> lore) {
         return createItem(Utils.buildItem(material, amount, name, lore), invSlot);
     }
 
@@ -152,7 +154,7 @@ public abstract class Gui {
      * @param lore     The lore of the item.
      * @return Returns the item placed directly into the player's {@link Gui}.
      */
-    public ItemStack createItem(Player p, XMaterial material, int amount, int invSlot, String name, List<String> lore) {
+    public ItemStack createItem(Player p, Material material, int amount, int invSlot, Component name, List<Component> lore) {
         return createItem(byPlayer.get(p), Utils.buildItem(material, amount, name, lore), invSlot);
     }
 

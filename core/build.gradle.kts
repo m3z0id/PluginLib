@@ -18,13 +18,12 @@ repositories {
 }
 
 dependencies {
-    api(libs.xseries)
     api(libs.annotations)
     compileOnly(libs.paper.api)
 }
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 

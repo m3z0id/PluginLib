@@ -1,6 +1,6 @@
 package me.darrionat.pluginlib.guis;
 
-import me.darrionat.pluginlib.Plugin;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -31,12 +31,11 @@ public abstract class AnimatedGui extends Gui {
     /**
      * Creates a new {@link AnimatedGui}.
      *
-     * @param plugin The plugin that this gui belongs to.
      * @param name   The title of the gui.
      * @param rows   The amount of rows the {@link Inventory} will have.
      */
-    public AnimatedGui(Plugin plugin, String name, int rows) {
-        super(plugin, name, rows);
+    public AnimatedGui(Component name, int rows) {
+        super(name, rows);
     }
 
     /**

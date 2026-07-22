@@ -1,6 +1,7 @@
 package me.darrionat.pluginlib.guis;
 
 import me.darrionat.pluginlib.Plugin;
+import me.darrionat.pluginlib.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,16 +9,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents a {@link List} of all {@link Gui}s within a {@link Plugin} and determines the outcome of an {@link
  * InventoryClickEvent}.
  */
 public class GuiManager implements GuiHandler, Listener {
-    private final Set<Gui> registeredGuis = new HashSet<>();
+    private final HashMap<String, Gui> REGISTERED_GUIS = new HashMap<>();
 
     public GuiManager(Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -27,14 +27,14 @@ public class GuiManager implements GuiHandler, Listener {
      * {@inheritDoc}
      */
     public void registerGui(Gui gui) {
-        registeredGuis.add(gui);
+        REGISTERED_GUIS.put(gui.getName(), gui);
     }
 
     /**
      * {@inheritDoc}
      */
     public void unregisterGui(Gui gui) {
-        registeredGuis.remove(gui);
+        REGISTERED_GUIS.remove(gui.getName());
     }
 
     /**
@@ -51,23 +51,19 @@ public class GuiManager implements GuiHandler, Listener {
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getCurrentItem() == null)
+        if (e.getCurrentItem() == null || !e.getInventory().equals(e.getClickedInventory()))
             return;
 
-        String title = e.getView().getTitle();
-        Gui clickedGui = null;
-        for (Gui gui : registeredGuis) {
-            if (!gui.getName().equals(title))
-                continue;
-            if (!gui.allowsClick())
-                e.setCancelled(true);
-            if (!e.getInventory().equals(e.getClickedInventory()))
-                continue;
-            clickedGui = gui;
-            break;
-        }
-        if (clickedGui != null)
-            clickedGui.clicked((Player) e.getWhoClicked(), e.getSlot(), e.getClick());
+        String title = Utils.getPlaintextTitle(e);
+        Gui clickedGui = REGISTERED_GUIS.get(title);
+
+        if (clickedGui == null)
+            return;
+
+        if (!clickedGui.allowsClick())
+            e.setCancelled(true);
+
+        clickedGui.clicked((Player) e.getWhoClicked(), e.getSlot(), e.getClick());
     }
 
     /**
@@ -77,18 +73,14 @@ public class GuiManager implements GuiHandler, Listener {
      */
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
-        String title = e.getView().getTitle();
-        Gui closedGui = null;
-        for (Gui gui : registeredGuis) {
-            if (!gui.getName().equals(title))
-                continue;
-            closedGui = gui;
-            break;
-        }
-        if (!(closedGui instanceof AnimatedGui))
+        String title = Utils.getPlaintextTitle(e);
+        Gui closedGui = REGISTERED_GUIS.get(title);
+
+        // null check + animation check
+        if (!(closedGui instanceof AnimatedGui animated))
             return;
+
         // Stops all animations
-        AnimatedGui animatedGui = (AnimatedGui) closedGui;
-        animatedGui.stopAnimations();
+        animated.stopAnimations();
     }
 }

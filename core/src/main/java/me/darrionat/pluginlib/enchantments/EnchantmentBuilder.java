@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-@SuppressWarnings({"removal", "unused", "UnstableApiUsage"})
+@SuppressWarnings({"removal", "UnstableApiUsage"})
 public class EnchantmentBuilder {
 
     /**

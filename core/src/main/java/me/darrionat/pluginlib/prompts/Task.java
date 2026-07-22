@@ -1,5 +1,6 @@
 package me.darrionat.pluginlib.prompts;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 /**
@@ -43,14 +44,14 @@ public abstract class Task {
      *
      * @return The task prompt text.
      */
-    public abstract String promptText();
+    public abstract Component promptText();
 
     /**
      * Executed once the prompt fails.
      *
      * @return The fail message.
      */
-    public abstract String onFail();
+    public abstract Component onFail();
 
     /**
      * Determines if an input is a valid input for the task currently.
@@ -59,7 +60,7 @@ public abstract class Task {
      * <p>
      * If the input is valid input, the {@link Task} is updated.
      *
-     * @param input The input text.
+     * @param input The input plaintext.
      * @return {@code true} if the task met its base conditions; otherwise {@code false}.
      */
     public abstract boolean valid(String input);

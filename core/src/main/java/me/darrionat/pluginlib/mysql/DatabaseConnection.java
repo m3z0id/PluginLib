@@ -61,7 +61,7 @@ public class DatabaseConnection {
      *
      * @throws IllegalStateException Thrown if a connection already exists.
      */
-    public void connect() {
+    public void connect() throws IllegalStateException {
         try {
             if (enabled()) {
                 throw new IllegalStateException("Connection already established");

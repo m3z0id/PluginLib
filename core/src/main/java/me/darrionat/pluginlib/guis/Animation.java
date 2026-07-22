@@ -4,6 +4,7 @@ import me.darrionat.pluginlib.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Objects;
 
@@ -53,7 +54,7 @@ public class Animation {
     /**
      * The id of the task running the animation.
      */
-    private int taskId = -1;
+    private BukkitTask task;
     /**
      * Used for iterating slots.
      */
@@ -66,7 +67,7 @@ public class Animation {
     /**
      * Creates a new animation within a gui.
      * <p>
-     * Animations should not be constructed outside of an {@link AnimatedGui}.
+     * Animations should not be constructed outside an {@link AnimatedGui}.
      *
      * @param gui    The gui the animation takes place within.
      * @param p      The player involved in the animation.
@@ -137,10 +138,9 @@ public class Animation {
      * @see #running()
      * @see #stop()
      */
-    @SuppressWarnings({"deprecation"})
     public void start() {
         if (running()) return;
-        taskId = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, this::animate, 0L, period);
+        task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::animate, 0L, period);
     }
 
     /**
@@ -211,8 +211,8 @@ public class Animation {
      */
     public void stop() {
         if (!running()) return;
-        Bukkit.getScheduler().cancelTask(taskId);
-        taskId = -1;
+        task.cancel();
+        task = null;
         for (int slot : slots)
             gui.createItem(p, from, slot);
     }
@@ -223,6 +223,6 @@ public class Animation {
      * @return Returns {@code true} if the animation is currently running; {@code false} otherwise.
      */
     public boolean running() {
-        return taskId != -1;
+        return task != null;
     }
 }

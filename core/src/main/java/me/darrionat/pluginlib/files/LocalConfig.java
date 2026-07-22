@@ -80,7 +80,7 @@ public class LocalConfig implements UpdatableConfig {
         }
 
         // Adds the version for debug purposes
-        config.set("version", plugin.getDescription().getVersion());
+        config.set("version", plugin.getPluginMeta().getVersion());
         save(config);
     }
 
