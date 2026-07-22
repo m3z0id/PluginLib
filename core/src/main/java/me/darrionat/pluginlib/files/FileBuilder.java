@@ -59,28 +59,7 @@ public abstract class FileBuilder {
      */
     public File getFile() {
         if (directory == null) return new File(plugin.getDataFolder(), name);
-        else return new File(plugin.getDataFolder() + File.separator + directory, name);
-    }
-
-    /**
-     * Determines if the file exists already.
-     *
-     * @return {@code true} if the file exists; {@code false} otherwise.
-     */
-    public boolean exists() {
-        return getFile().exists();
-    }
-
-    private void setupSubdirectory() {
-        File dir = new File(plugin.getDataFolder() + File.separator + directory);
-        // Only attempt to create if it doesn't already exist
-        if (!dir.exists()) {
-            if (dir.mkdir()) {
-                plugin.log("Plugin folder " + directory + " created");
-            } else {
-                plugin.log("Failed to create " + directory + " directory inside of plugin folder");
-            }
-        }
+        return new File(new File(plugin.getDataFolder(), directory), name);
     }
 
     /**
@@ -88,15 +67,22 @@ public abstract class FileBuilder {
      * exists.
      */
     public void createFile() {
-        if (directory != null) {
-            setupSubdirectory();
-        }
         File file = getFile();
+        if(!file.getParentFile().exists())
+            if(file.getParentFile().mkdirs()) {
+                plugin.log("Plugin folder %s created".formatted(directory));
+            } else {
+                plugin.log("Failed to create %s directory inside of plugin folder".formatted(directory));
+            }
+
         try {
-            file.createNewFile();
-            plugin.log("Created " + file.getName());
+            if(file.createNewFile()) {
+                plugin.log("Created %s".formatted(file.getName()));
+            } else {
+                throw new IOException("Failed to create file");  // gets caught immediately
+            }
         } catch (IOException exe) {
-            plugin.log("Failed to create " + file.getName());
+            plugin.log("Failed to create %s".formatted(file.getName()));
             exe.printStackTrace();
         }
     }

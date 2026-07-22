@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -33,11 +34,11 @@ public class SpigotMCUpdateHandler {
      * @param resourceId The project id of the resource on SpigotMC.
      */
     public SpigotMCUpdateHandler(Plugin plugin, int resourceId) {
-        this.currentVersion = plugin.getDescription().getVersion();
+        this.currentVersion = plugin.getPluginMeta().getVersion();
         this.resourceId = resourceId;
         try {
-            this.spigotAPI = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId);
-        } catch (MalformedURLException e) {
+            this.spigotAPI = URI.create("https://api.spigotmc.org/legacy/update.php?resource=%d".formatted(resourceId)).toURL();
+        } catch (IllegalArgumentException | MalformedURLException e) {
             e.printStackTrace();
         }
     }
@@ -48,7 +49,7 @@ public class SpigotMCUpdateHandler {
      * @return Returns the URL of the resource's page on SpigotMC.
      */
     public String getResourceURL() {
-        return "https://www.spigotmc.org/resources/" + resourceId;
+        return "https://www.spigotmc.org/resources/%d".formatted(resourceId);
     }
 
     /**
@@ -58,8 +59,7 @@ public class SpigotMCUpdateHandler {
      */
     public boolean updateAvailable() {
         try {
-            String latestVersion = getLatestVersion();
-            return !currentVersion.equals(latestVersion);
+            return !currentVersion.equals(getLatestVersion());
         } catch (IOException e) {
             e.printStackTrace();
             return false;

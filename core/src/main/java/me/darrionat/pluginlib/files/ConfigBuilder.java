@@ -73,7 +73,7 @@ public class ConfigBuilder extends FileBuilder {
      * @see ConfigBuilder#updateConfig
      */
     public Config build() {
-        if (!exists()) {
+        if (getFile().exists()) {
             if (builtIn) {
                 plugin.saveResource(name, false);
             } else {

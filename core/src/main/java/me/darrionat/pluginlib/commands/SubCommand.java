@@ -36,7 +36,7 @@ public abstract class SubCommand {
     public SubCommand(BaseCommand parentCommand, Plugin plugin) {
         this.parentCommand = parentCommand;
         this.errorHandler = plugin.getErrorHandler();
-        this.permission = parentCommand.getCommandLabel() + "." + getSubCommand();
+        this.permission = "%s.%s".formatted(parentCommand.getCommandLabel(), getSubCommand());
         parentCommand.addSubCommand(this);
     }
 

@@ -28,7 +28,7 @@ public class Duration {
      * @throws NumberFormatException thrown when the duration cannot be parsed.
      */
     public static double parseDuration(String s) throws NumberFormatException {
-        String unit = s.charAt(s.length() - 1) + "";
+        String unit = String.valueOf(s.charAt(s.length() - 1));
         if (!Duration.validUnit(unit))
             return Double.parseDouble(s);
 

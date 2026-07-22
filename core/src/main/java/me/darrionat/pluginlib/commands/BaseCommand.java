@@ -28,7 +28,7 @@ public abstract class BaseCommand implements CommandExecutor, HeritableCommand {
      */
     public BaseCommand(Plugin plugin) {
         this.errorHandler = plugin.getErrorHandler();
-        this.permission = getCommandLabel() + ".use";
+        this.permission = "%s.use".formatted(getCommandLabel());
         PluginCommand command = plugin.getCommand(getCommandLabel());
         command.setExecutor(this);
         command.setTabCompleter(new CommandTabCompleter(this));

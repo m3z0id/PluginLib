@@ -67,8 +67,7 @@ public class DatabaseConnection {
                 throw new IllegalStateException("Connection already established");
             }
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(
-                    "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database, this.username, this.password);
+            connection = DriverManager.getConnection("jdbc:mysql://%s:%d/%s".formatted(this.host, this.port, this.database), this.username, this.password);
         } catch (SQLException | ClassNotFoundException exe) {
             exe.printStackTrace();
         }

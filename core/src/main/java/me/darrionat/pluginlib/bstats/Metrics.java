@@ -15,6 +15,9 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -25,7 +28,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * bStats collects some data for plugin authors.
  * <p>
- * Check out https://bStats.org/ to learn more about bStats!
+ * Check out <a href="https://bStats.org/">bStats</a> to learn more about bStats!
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Metrics {
@@ -55,7 +58,7 @@ public class Metrics {
     public static final int B_STATS_VERSION = 1;
 
     // The url to which the data is sent
-    private static final String URL = "https://bStats.org/submitData/bukkit";
+    private static final URL B_STATS_URL;
 
     // Is bStats enabled on this server?
     private final boolean enabled;
@@ -70,7 +73,7 @@ public class Metrics {
     private static boolean logResponseStatusText;
 
     // The uuid of the server
-    private static String serverUUID;
+    private static UUID serverUUID;
 
     // The plugin
     private final Plugin plugin;
@@ -115,12 +118,12 @@ public class Metrics {
             config.addDefault("logResponseStatusText", false);
 
             // Inform the server owners about bStats
-            config.options().header(
-                    "bStats collects some data for plugin authors like how many servers are using their plugins.\n" +
-                            "To honor their work, you should not disable it.\n" +
-                            "This has nearly no effect on the server performance!\n" +
+            config.options().setHeader(List.of(
+                            "bStats collects some data for plugin authors like how many servers are using their plugins.",
+                            "To honor their work, you should not disable it.",
+                            "This has nearly no effect on the server performance!",
                             "Check out https://bStats.org/ to learn more :)"
-            ).copyDefaults(true);
+                    )).copyDefaults(true);
             try {
                 config.save(configFile);
             } catch (IOException ignored) {
@@ -129,7 +132,7 @@ public class Metrics {
 
         // Load the data
         enabled = config.getBoolean("enabled", true);
-        serverUUID = config.getString("serverUuid");
+        serverUUID = UUID.fromString(Objects.requireNonNull(config.getString("serverUuid")));
         logFailedRequests = config.getBoolean("logFailedRequests", false);
         logSentData = config.getBoolean("logSentData", false);
         logResponseStatusText = config.getBoolean("logResponseStatusText", false);
@@ -209,8 +212,8 @@ public class Metrics {
     public JsonObject getPluginData() {
         JsonObject data = new JsonObject();
 
-        String pluginName = plugin.getDescription().getName();
-        String pluginVersion = plugin.getDescription().getVersion();
+        String pluginName = plugin.getPluginMeta().getName();
+        String pluginVersion = plugin.getPluginMeta().getVersion();
 
         data.addProperty("pluginName", pluginName); // Append the name of the plugin
         data.addProperty("id", pluginId); // Append the id of the plugin
@@ -260,7 +263,7 @@ public class Metrics {
 
         JsonObject data = new JsonObject();
 
-        data.addProperty("serverUUID", serverUUID);
+        data.addProperty("serverUUID", serverUUID.toString());
 
         data.addProperty("playerAmount", playerAmount);
         data.addProperty("onlineMode", onlineMode);
@@ -300,7 +303,7 @@ public class Metrics {
                                     Method jsonStringGetter = jsonObjectJsonSimple.getDeclaredMethod("toJSONString");
                                     jsonStringGetter.setAccessible(true);
                                     String jsonString = (String) jsonStringGetter.invoke(plugin);
-                                    JsonObject object = new JsonParser().parse(jsonString).getAsJsonObject();
+                                    JsonObject object = JsonParser.parseString(jsonString).getAsJsonObject();
                                     pluginData.add(object);
                                 }
                             } catch (ClassNotFoundException e) {
@@ -328,7 +331,7 @@ public class Metrics {
             } catch (Exception e) {
                 // Something went wrong! :(
                 if (logFailedRequests) {
-                    plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + plugin.getName(), e);
+                    plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of %s".formatted(plugin.getName()), e);
                 }
             }
         }).start();
@@ -349,9 +352,9 @@ public class Metrics {
             throw new IllegalAccessException("This method must not be called from the main thread!");
         }
         if (logSentData) {
-            plugin.getLogger().info("Sending data to bStats: " + data);
+            plugin.getLogger().info("Sending data to bStats: %s".formatted(data.toString()));
         }
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(URL).openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) B_STATS_URL.openConnection();
 
         // Compress the data to save bandwidth
         byte[] compressedData = compress(data.toString());
@@ -363,7 +366,7 @@ public class Metrics {
         connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
         connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
         connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
-        connection.setRequestProperty("User-Agent", "MC-Server/" + B_STATS_VERSION);
+        connection.setRequestProperty("User-Agent", "MC-Server/%d".formatted(B_STATS_VERSION));
 
         // Send data
         connection.setDoOutput(true);
@@ -380,7 +383,7 @@ public class Metrics {
         }
 
         if (logResponseStatusText) {
-            plugin.getLogger().info("Sent data to bStats and received response: " + builder);
+            plugin.getLogger().info("Sent data to bStats and received response: %s".formatted(builder));
         }
     }
 
@@ -434,7 +437,7 @@ public class Metrics {
                 chart.add("data", data);
             } catch (Throwable t) {
                 if (logFailedRequests) {
-                    Bukkit.getLogger().log(Level.WARNING, "Failed to get data for custom chart with id " + chartId, t);
+                    Plugin.getProject().getLogger().log(Level.WARNING, "Failed to get data for custom chart with id %s".formatted(chartId), t);
                 }
                 return null;
             }
@@ -732,4 +735,11 @@ public class Metrics {
         }
     }
 
+    static {
+        try {
+            B_STATS_URL = new URI("https://bStats.org/submitData/bukkit").toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

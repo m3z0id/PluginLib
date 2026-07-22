@@ -105,7 +105,7 @@ public class BuildSerializer {
      * @return Returns the dimension string to be stored within the file.
      */
     private static String dimensionsAsString(int length, int height, int width) {
-        return "dim=" + length + DIMENSION_SEP + height + DIMENSION_SEP + width;
+        return "dim=%d%s%d%s%d".formatted(length, DIMENSION_SEP, height, DIMENSION_SEP, width);
     }
 
     /**
