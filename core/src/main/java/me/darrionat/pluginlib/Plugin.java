@@ -2,8 +2,6 @@ package me.darrionat.pluginlib;
 
 import com.cryptomorin.xseries.XMaterial;
 import me.darrionat.pluginlib.bstats.Metrics;
-import me.darrionat.pluginlib.enchantments.EnchantmentHandler;
-import me.darrionat.pluginlib.enchantments.EnchantmentService;
 import me.darrionat.pluginlib.guis.GuiHandler;
 import me.darrionat.pluginlib.guis.GuiManager;
 import me.darrionat.pluginlib.utils.SpigotMCUpdateHandler;
@@ -16,7 +14,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public abstract class Plugin extends JavaPlugin implements IPlugin {
     private static Plugin instance;
     private GuiHandler guiHandler;
-    private EnchantmentHandler enchantmentHandler;
     protected Metrics metrics;
 
     /**
@@ -37,7 +34,6 @@ public abstract class Plugin extends JavaPlugin implements IPlugin {
     public final void onEnable() {
         instance = this;
         guiHandler = new GuiManager(this);
-        enchantmentHandler = new EnchantmentService();
         initPlugin();
     }
 
@@ -46,10 +42,6 @@ public abstract class Plugin extends JavaPlugin implements IPlugin {
      */
     public final GuiHandler getGuiHandler() {
         return guiHandler;
-    }
-
-    public final EnchantmentHandler getEnchantmentHandler() {
-        return enchantmentHandler;
     }
 
     /**
