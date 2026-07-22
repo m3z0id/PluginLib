@@ -11,12 +11,21 @@ repositories {
         name = "spigotmc-repo"
         url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
     }
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
 }
 
 dependencies {
     api(libs.xseries)
     api(libs.annotations)
-    compileOnly(libs.spigot.api)
+    compileOnly(libs.paper.api)
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 description = "core"
