@@ -48,6 +48,7 @@ public class ChatPromptListener implements Listener {
         Task task = ACTIVE_TASKS.get(p.getUniqueId());
         if (task == null) return;
 
+        e.setCancelled(true);
         String text = Utils.getComponentPlaintext(e.message());
         if (!task.valid(text)) {
             p.sendMessage(task.onFail());
